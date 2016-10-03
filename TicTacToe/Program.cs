@@ -4,10 +4,10 @@ namespace TicTacToe
 {
     class Program
     {
-        const string playerToken = "XOABCDEFGHIJKLMNPQRSTUVWYZ";
+        private const string playerToken = "XOABCDEFGHIJKLMNPQRSTUVWYZ";
         static void Main(string[] args)
         {
-            
+
             int numPlayers, boardSize, winCondition, currentPlayer;
             char[,] gameBoard;
 
@@ -29,7 +29,7 @@ namespace TicTacToe
             {
                 //Input number of players
                 Console.WriteLine("Please enter the number of players:");
-                while(!int.TryParse(Console.ReadLine(), out numPlayers) || numPlayers < 2 || numPlayers > 26)
+                while (!int.TryParse(Console.ReadLine(), out numPlayers) || numPlayers < 2 || numPlayers > 26)
                 {
                     Console.WriteLine("That is not a valid value. Please try again:");
                 }
@@ -52,27 +52,42 @@ namespace TicTacToe
             }
             #endregion
 
-            #region Game Play
+            GamePlay(gameBoard, currentPlayer, numPlayers, winCondition);
+        }
+
+        private static void GamePlay(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition)
+        {
             bool gameWon = false;
             while (!gameWon)
             {
-                gameWon = GamePlay(gameBoard, currentPlayer, numPlayers, winCondition);
+                // TODO
+                printBoard(gameBoard);
+                for (int i = currentPlayer; i < numPlayers; i++)
+                {
+                    char token = playerToken[i];
+                    //get row input
+                    //get column input
+                    //insert into game board
+                    //check wincondition
+                }
+                currentPlayer = 0;
             }
-
-            #endregion
         }
 
-        private static bool GamePlay(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition)
+        private static bool checkWin(char[,] gameBoard, int row, int column)
         {
             throw new NotImplementedException();
+        }
 
-            //print board
-            for (int i = currentPlayer; i < numPlayers; i++)
-            {
-                char token = playerToken[i];
-                //get row input
-                //get column input
-            }
+        private static void saveGame(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void printBoard(char[,] gameBoard)
+        {
+            throw new NotImplementedException();
         }
     }
 }
+
