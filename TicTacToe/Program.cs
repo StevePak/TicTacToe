@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace TicTacToe
 {
@@ -19,11 +22,19 @@ namespace TicTacToe
             char continueGame = Console.ReadKey().KeyChar;
             if (Char.ToLower(continueGame) == 'y')
             {
-                numPlayers = 2;
-                boardSize = 3;
-                winCondition = 3;
-                currentPlayer = 1;
-                gameBoard = new char[3, 3];
+                Console.WriteLine("Please enter the file name that you want to load the game from:");
+                string fileName = Console.ReadLine();
+
+
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                GameState state = (GameState)formatter.Deserialize(stream);
+                stream.Close();
+                numPlayers = state.numPlayers;
+                boardSize = state.boardSize;
+                winCondition = state.winCondition;
+                currentPlayer = state.currentPlayer;
+                gameBoard = state.gameBoard;
             }
             else
             {
@@ -72,8 +83,15 @@ namespace TicTacToe
                     
                     do
                     {
-                        Console.WriteLine("Please enter the row:");
-                        while (!int.TryParse(Console.ReadLine(), out row) || row <= 0 || row > boardSize)
+                        Console.WriteLine("Please enter the row or type s to save:");
+                        string rowOrSave = Console.ReadLine().Trim().ToLower();
+                        if(rowOrSave == "s")
+                        {
+                            saveGame(gameBoard, i, numPlayers, winCondition, boardSize);
+                            Console.WriteLine("Game successfully saved");
+                            return;
+                        }
+                        while (!int.TryParse(rowOrSave, out row) || row <= 0 || row > boardSize)
                         {
                             Console.WriteLine("That is not a valid value. Please try again:");
                         }
@@ -205,9 +223,21 @@ namespace TicTacToe
             return false;
         }
 
-        private static void saveGame(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition)
+        private static void saveGame(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition, int boardSize)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Please enter the file name that you want to save the game to:");
+            string fileName = Console.ReadLine();
+            var state = new GameState();
+            state.gameBoard = gameBoard;
+            state.currentPlayer = currentPlayer;
+            state.numPlayers = numPlayers;
+            state.winCondition = winCondition;
+            state.boardSize = boardSize;
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None);
+            formatter.Serialize(stream, state);
+            stream.Close();
         }
 
         private static void printBoard(char[,] gameBoard, int boardSize)
@@ -242,6 +272,16 @@ namespace TicTacToe
                 Console.WriteLine(line2);
             }
         }
+    }
+
+    [Serializable]
+    public class GameState
+    {
+        public char[,] gameBoard { get; set; }
+        public int currentPlayer { get; set; }
+        public int numPlayers { get; set; }
+        public int winCondition { get; set; }
+        public int boardSize { get; set; }
     }
 }
 
