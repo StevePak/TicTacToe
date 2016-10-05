@@ -15,6 +15,7 @@ namespace TicTacToe
             char[,] gameBoard;
 
 
+
             //Initialize Game State - via input or save file
             #region Initialize Game State
 
@@ -71,7 +72,7 @@ namespace TicTacToe
             bool gameWon = false;
             while (!gameWon)
             {
-                // TODO
+               
                 
                 for (int i = currentPlayer; i <= numPlayers; i++)
                 {
@@ -94,6 +95,7 @@ namespace TicTacToe
                         while (!int.TryParse(rowOrSave, out row) || row <= 0 || row > boardSize)
                         {
                             Console.WriteLine("That is not a valid value. Please try again:");
+                            rowOrSave = Console.ReadLine().Trim().ToLower();
                         }
                         Console.WriteLine("Please enter the column:");
                         while (!int.TryParse(Console.ReadLine(), out col) || col <= 0 || col > boardSize)
