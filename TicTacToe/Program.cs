@@ -4,7 +4,7 @@ namespace TicTacToe
 {
     class Program
     {
-        private const string playerToken = "XOABCDEFGHIJKLMNPQRSTUVWYZ";
+        private const string playerToken = " XOABCDEFGHIJKLMNPQRSTUVWYZ";
         static void Main(string[] args)
         {
 
@@ -22,7 +22,7 @@ namespace TicTacToe
                 numPlayers = 2;
                 boardSize = 3;
                 winCondition = 3;
-                currentPlayer = 0;
+                currentPlayer = 1;
                 gameBoard = new char[3, 3];
             }
             else
@@ -48,7 +48,7 @@ namespace TicTacToe
                 {
                     Console.WriteLine("That is not a valid value. Please try again:");
                 }
-                currentPlayer = 0;
+                currentPlayer = 1;
             }
             #endregion
 
@@ -61,32 +61,44 @@ namespace TicTacToe
             while (!gameWon)
             {
                 // TODO
-                printBoard(gameBoard);
-                for (int i = currentPlayer; i < numPlayers; i++)
+                
+                for (int i = currentPlayer; i <= numPlayers; i++)
                 {
+                    printBoard(gameBoard, boardSize);
                     char token = playerToken[i];
-                    Console.WriteLine("Player {i}, token {token}:");
-                    int row;
-                    int col;
-                    Console.WriteLine("Please enter the row:");
-                    while (!int.TryParse(Console.ReadLine(), out row) || row < 0 || row >= boardSize)
+                    Console.WriteLine($"Player {i}, token {token}:");
+                    int row = -1;
+                    int col = -1;
+                    
+                    do
                     {
-                        Console.WriteLine("That is not a valid value. Please try again:");
-                    }
-                    Console.WriteLine("Please enter the column:");
-                    while (!int.TryParse(Console.ReadLine(), out col) || col < 0 || col >= boardSize)
-                    {
-                        Console.WriteLine("That is not a valid value. Please try again:");
-                    }
+                        Console.WriteLine("Please enter the row:");
+                        while (!int.TryParse(Console.ReadLine(), out row) || row <= 0 || row > boardSize)
+                        {
+                            Console.WriteLine("That is not a valid value. Please try again:");
+                        }
+                        Console.WriteLine("Please enter the column:");
+                        while (!int.TryParse(Console.ReadLine(), out col) || col <= 0 || col > boardSize)
+                        {
+                            Console.WriteLine("That is not a valid value. Please try again:");
+                        }
+                        row--;
+                        col--;
+                        if (gameBoard[row, col] != '\0')
+                        {
+                            Console.WriteLine("This spot is taken. Please try again");
+                        }
+                    } while (gameBoard[row, col] != '\0');
                     gameBoard[row, col] = token;
                     bool win = checkWin(gameBoard, row, col, winCondition, boardSize);
                     if (win)
                     {
-                        Console.WriteLine("Congratulations! Player {i} won the game!");
-                        printBoard(gameBoard);
+                        Console.WriteLine($"Congratulations! Player {i} won the game!");
+                        printBoard(gameBoard, boardSize);
+                        return;
                     }
                 }
-                currentPlayer = 0;
+                currentPlayer = 1;
             }
         }
 
@@ -198,9 +210,37 @@ namespace TicTacToe
             throw new NotImplementedException();
         }
 
-        private static void printBoard(char[,] gameBoard)
+        private static void printBoard(char[,] gameBoard, int boardSize)
         {
-            throw new NotImplementedException();
+            string firstLine = " ";
+            for (int i = 1; i <= boardSize; i++)
+            {
+                firstLine += $"   {i}";
+            }
+            Console.WriteLine(firstLine);
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                string line1 = $"{i + 1}  ";
+                string line2 = "   ";
+                for (int j = 0; j < boardSize; j++)
+                {
+                    line1 += $" {gameBoard[i, j]} ";
+                    line2 += "---";
+                    if (j != boardSize - 1)
+                    {
+                        line1 += "|";
+                        line2 += "+";
+                    }
+                    
+                }
+                if (i == boardSize - 1)
+                {
+                    line2 = "";
+                }
+                Console.WriteLine(line1);
+                Console.WriteLine(line2);
+            }
         }
     }
 }
