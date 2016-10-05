@@ -52,10 +52,10 @@ namespace TicTacToe
             }
             #endregion
 
-            GamePlay(gameBoard, currentPlayer, numPlayers, winCondition);
+            GamePlay(gameBoard, currentPlayer, numPlayers, winCondition, boardSize);
         }
 
-        private static void GamePlay(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition)
+        private static void GamePlay(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition, int boardSize)
         {
             bool gameWon = false;
             while (!gameWon)
@@ -65,18 +65,132 @@ namespace TicTacToe
                 for (int i = currentPlayer; i < numPlayers; i++)
                 {
                     char token = playerToken[i];
-                    //get row input
-                    //get column input
-                    //insert into game board
-                    //check wincondition
+                    Console.WriteLine("Player {i}, token {token}:");
+                    int row;
+                    int col;
+                    Console.WriteLine("Please enter the row:");
+                    while (!int.TryParse(Console.ReadLine(), out row) || row < 0 || row >= boardSize)
+                    {
+                        Console.WriteLine("That is not a valid value. Please try again:");
+                    }
+                    Console.WriteLine("Please enter the column:");
+                    while (!int.TryParse(Console.ReadLine(), out col) || col < 0 || col >= boardSize)
+                    {
+                        Console.WriteLine("That is not a valid value. Please try again:");
+                    }
+                    gameBoard[row, col] = token;
+                    bool win = checkWin(gameBoard, row, col, winCondition, boardSize);
+                    if (win)
+                    {
+                        Console.WriteLine("Congratulations! Player {i} won the game!");
+                        printBoard(gameBoard);
+                    }
                 }
                 currentPlayer = 0;
             }
         }
 
-        private static bool checkWin(char[,] gameBoard, int row, int column)
+        private static bool checkWin(char[,] gameBoard, int row, int column, int winCondition, int boardSize)
         {
-            throw new NotImplementedException();
+            char token = gameBoard[row, column];
+            //check left to right
+            int rowCheck = row;
+            int colCheck = column;
+            while (colCheck >= 0 && gameBoard[rowCheck, colCheck] == token)
+            {
+                colCheck--;
+            }
+            colCheck++;
+
+            int count = 0;
+
+            while (colCheck < boardSize && gameBoard[rowCheck, colCheck] == token)
+            {
+                count++;
+                colCheck++;     
+            }
+
+            if (count >= winCondition)
+            {
+                return true;
+            }
+            //check up to down
+
+            rowCheck = row;
+            colCheck = column;
+
+            while (rowCheck >= 0 && gameBoard[rowCheck, colCheck] == token)
+            {
+                rowCheck--;
+            }
+            rowCheck++;
+
+            count = 0;
+
+            while (rowCheck < boardSize && gameBoard[rowCheck, colCheck] == token)
+            {
+                count++;
+                rowCheck++;
+            }
+
+            if (count >= winCondition)
+            {
+                return true;
+            }
+            //check top left to bottom right
+
+            rowCheck = row;
+            colCheck = column;
+
+            while (rowCheck >= 0 && colCheck >= 0 && gameBoard[rowCheck, colCheck] == token)
+            {
+                rowCheck--;
+                colCheck--;
+            }
+            rowCheck++;
+            colCheck++;
+
+            count = 0;
+
+            while (rowCheck < boardSize && colCheck < boardSize && gameBoard[rowCheck, colCheck] == token)
+            {
+                count++;
+                rowCheck++;
+                colCheck++;
+            }
+
+            if (count >= winCondition)
+            {
+                return true;
+            }
+
+            //check bottom left to top right
+
+            rowCheck = row;
+            colCheck = column;
+
+            while (rowCheck < boardSize && colCheck > 0 && gameBoard[rowCheck, colCheck] == token)
+            {
+                rowCheck++;
+                colCheck--;
+            }
+            rowCheck--;
+            colCheck++;
+
+            count = 0;
+
+            while (rowCheck >= 0 && colCheck < boardSize && gameBoard[rowCheck, colCheck] == token)
+            {
+                count++;
+                rowCheck--;
+                colCheck++;
+            }
+
+            if (count >= winCondition)
+            {
+                return true;
+            }
+            return false;
         }
 
         private static void saveGame(char[,] gameBoard, int currentPlayer, int numPlayers, int winCondition)
